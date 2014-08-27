@@ -39,7 +39,7 @@ function addBookmark() {
     		"op":"authCheckCred",
     		"pass":"password",
 		"user":"mailto:dummy",
-		"userLabel":chromeSssUser,
+		"label":chromeSssUser,
   		};
 
     
@@ -52,7 +52,7 @@ function addBookmark() {
     		var resp = JSON.parse(xhr.responseText);
 
 		var credential = resp.authCheckCred.key;
-		var user = resp.authCheckCred.uri;
+		var user = resp.authCheckCred.user;
   		//alert(credential + "      " + user);
 
 		//Now I will get the description of the user collections with the method /collsWithEntries/
@@ -87,7 +87,7 @@ function addBookmark() {
 			
 					if(resp2.collsWithEntries.colls[i].label == "Bookmarks Private"){
 	
-						storageCollection = resp2.collsWithEntries.colls[i].uri;
+						storageCollection = resp2.collsWithEntries.colls[i].id;
 						
 
 					}
@@ -102,7 +102,7 @@ function addBookmark() {
 			
 					if(resp2.collsWithEntries.colls[i].label == "Bookmarks Shared"){
 	
-						storageCollection = resp2.collsWithEntries.colls[i].uri;
+						storageCollection = resp2.collsWithEntries.colls[i].id;
 						
 
 					}
@@ -122,7 +122,7 @@ function addBookmark() {
 			
 					if(resp2.collsWithEntries.colls[i].label == "root"){
 	
-						rootCollection = resp2.collsWithEntries.colls[i].uri;
+						rootCollection = resp2.collsWithEntries.colls[i].id;
 						
 
 					}
@@ -145,7 +145,7 @@ function addBookmark() {
 			
 			"addNewColl": true,
 			"coll": rootCollection,
-			"collEntryLabel": "Bookmarks Private",
+			"label": "Bookmarks Private",
 			"key": credential,
 			"op": "collEntryAdd",
 			"user": user,
@@ -159,7 +159,7 @@ function addBookmark() {
 				if (xhr2a.readyState == 4) {
 
 					var resp2a = JSON.parse(xhr2a.responseText);
-					storageCollection = resp2a.collEntryAdd.uri;
+					storageCollection = resp2a.collEntryAdd.entity;
 
 
 
@@ -177,8 +177,8 @@ function addBookmark() {
 			
 			"addNewColl": false,
 			"coll": storageCollection,
-			"collEntry": tabLink,
-			"collEntryLabel": title,
+			"entry": tabLink,
+			"label": title,
 			"key": credential,
 			"op": "collEntryAdd",
 			"user": user,
@@ -207,9 +207,9 @@ if(tags[j].replace(/^\s+|\s+$/g,'').length>0){
 			
 						"key": credential,
 						"op": "tagAdd",
-						"resource": tabLink,
+						"entity": tabLink,
 						"space": "privateSpace",
-						"tagString": tags[j].replace(/^\s+|\s+$/g,''),
+						"label": tags[j].replace(/^\s+|\s+$/g,''),
 						"user": user,
 						};
 
@@ -251,7 +251,7 @@ if(tags[j].replace(/^\s+|\s+$/g,'').length>0){
 			
 			"addNewColl": true,
 			"coll": rootCollection,
-			"collEntryLabel": "Bookmarks Shared",
+			"label": "Bookmarks Shared",
 			"key": credential,
 			"op": "collEntryAdd",
 			"user": user,
@@ -265,7 +265,7 @@ if(tags[j].replace(/^\s+|\s+$/g,'').length>0){
 				if (xhr2a.readyState == 4) {
 
 					var resp2a = JSON.parse(xhr2a.responseText);
-					storageCollection = resp2a.collEntryAdd.uri;
+					storageCollection = resp2a.collEntryAdd.entity;
 
 
 			//I make the collection public
@@ -280,7 +280,7 @@ if(tags[j].replace(/^\s+|\s+$/g,'').length>0){
 
 			data={
 			
-			"entityUri":storageCollection,
+			"entity":storageCollection,
 			"key": credential,
 			"op": "entityPublicSet",
 			"user": user,
@@ -305,8 +305,8 @@ if(tags[j].replace(/^\s+|\s+$/g,'').length>0){
 			
 			"addNewColl": false,
 			"coll": storageCollection,
-			"collEntry": tabLink,
-			"collEntryLabel": title,
+			"entry": tabLink,
+			"label": title,
 			"key": credential,
 			"op": "collEntryAdd",
 			"user": user,
@@ -335,9 +335,9 @@ if(tags[j].replace(/^\s+|\s+$/g,'').length>0){
 			
 						"key": credential,
 						"op": "tagAdd",
-						"resource": tabLink,
+						"entity": tabLink,
 						"space": "privateSpace",
-						"tagString": tags[j].replace(/^\s+|\s+$/g,''),
+						"label": tags[j].replace(/^\s+|\s+$/g,''),
 						"user": user,
 						};
 
@@ -372,8 +372,8 @@ if(tags[j].replace(/^\s+|\s+$/g,'').length>0){
 			
 			"addNewColl": false,
 			"coll": storageCollection,
-			"collEntry": tabLink,
-			"collEntryLabel": title,
+			"entry": tabLink,
+			"label": title,
 			"key": credential,
 			"op": "collEntryAdd",
 			"user": user,
@@ -402,9 +402,9 @@ if(tags[j].replace(/^\s+|\s+$/g,'').length>0){
 			
 						"key": credential,
 						"op": "tagAdd",
-						"resource": tabLink,
+						"entity": tabLink,
 						"space": "privateSpace",
-						"tagString": tags[j].replace(/^\s+|\s+$/g,''),
+						"label": tags[j].replace(/^\s+|\s+$/g,''),
 						"user": user,
 						};
 
