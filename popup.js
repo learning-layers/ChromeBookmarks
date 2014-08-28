@@ -97,7 +97,7 @@ function addBookmark() {
 			if(privates == true){
 				for(i=0;i<resp2.collsWithEntries.colls.length;i++){
 			
-					if(resp2.collsWithEntries.colls[i].label == "Bookmarks Private"){
+					if(resp2.collsWithEntries.colls[i].label == chromeSssUser + " : Bookmarks Private"){
 	
 						storageCollection = resp2.collsWithEntries.colls[i].id;
 						
@@ -112,7 +112,7 @@ function addBookmark() {
 			if(privates == false){
 				for(i=0;i<resp2.collsWithEntries.colls.length;i++){
 			
-					if(resp2.collsWithEntries.colls[i].label == "Bookmarks Shared"){
+					if(resp2.collsWithEntries.colls[i].label == chromeSssUser + " : Bookmarks Shared"){
 	
 						storageCollection = resp2.collsWithEntries.colls[i].id;
 						
@@ -157,7 +157,7 @@ function addBookmark() {
 			
 			"addNewColl": true,
 			"coll": rootCollection,
-			"label": "Bookmarks Private",
+			"label": chromeSssUser + " : Bookmarks Private",
 			"key": credential,
 			"op": "collEntryAdd",
 			"user": user,
@@ -263,7 +263,7 @@ if(tags[j].replace(/^\s+|\s+$/g,'').length>0){
 			
 			"addNewColl": true,
 			"coll": rootCollection,
-			"label": "Bookmarks Shared",
+			"label": chromeSssUser + " : Bookmarks Shared",
 			"key": credential,
 			"op": "collEntryAdd",
 			"user": user,
