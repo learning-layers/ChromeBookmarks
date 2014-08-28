@@ -3,6 +3,14 @@
 // Global reference to the status display SPAN
 var statusDisplay = null;
 
+// Display message
+function displayMessage(message, type) {
+	if (type === 'error') {
+		message = '<span style="color:red;">' + message + '</span>';
+	}
+    document.write('<br><br><b><center>' + message + '</center></b>');
+}
+
 // POST the data to the server using XMLHttpRequest
 function addBookmark() {
     // Cancel the form submit
@@ -19,9 +27,16 @@ function addBookmark() {
 
     var privates = document.getElementById('private').checked;
 
-    chrome.storage.sync.get(["chromeSssUrl","chromeSssUser"], function(result) {
+    chrome.storage.sync.get(["chromeSssUrl","chromeSssUser","chromeSssPassword"], function(result) {
 	var chromeSssUrl = result["chromeSssUrl"];
 	var chromeSssUser = result["chromeSssUser"];
+	var chromeSssPassword = result["chromeSssPassword"];
+
+	// Fail with messase if needed configuration is not provided
+	if ( !(chromeSssUrl && chromeSssUser && chromeSssPassword) ) {
+		displayMessage('Configuration options missing. Please configure the extension!', 'error');
+		return false;
+	}
 	
 	chrome.tabs.getSelected(null,function(tab) {
 	     var tabLink = tab.url;	
@@ -30,56 +45,53 @@ function addBookmark() {
     	// Set up an asynchronous AJAX POST request
     	var xhr = new XMLHttpRequest();
     	xhr.open('POST', chromeSssUrl + "authCheckCred/", true); //false to make it synchronous
-	
-	// Set correct header for form data 
-	xhr.setRequestHeader('Content-type', 'application/json');
 
-	var data={
+    	// Set correct header for form data 
+    	xhr.setRequestHeader('Content-type', 'application/json');
+
+    	var data={
     		"key":"someKey",
     		"op":"authCheckCred",
-    		"pass":"password",
-		"user":"mailto:dummy",
-		"label":chromeSssUser,
-  		};
+    		"pass":chromeSssPassword,
+			"user":"mailto:dummy",
+			"label":chromeSssUser,
+		};
 
-    
-	// send the collected data as JSON
-  	xhr.send(JSON.stringify(data));
-
-	xhr.onreadystatechange = function () {
-    
-		if (xhr.readyState == 4) {
-    		var resp = JSON.parse(xhr.responseText);
-
-		var credential = resp.authCheckCred.key;
-		var user = resp.authCheckCred.user;
-  		//alert(credential + "      " + user);
-
-		//Now I will get the description of the user collections with the method /collsWithEntries/
-
-    		// Set up an asynchronous AJAX POST request
-    		var xhr2 = new XMLHttpRequest();
-    		xhr2.open('POST', chromeSssUrl + "collsWithEntries/", true); //false to make it synchronous
-	
-		// Set correct header for form data 
-		xhr2.setRequestHeader('Content-type', 'application/json');
-
-
-		data={
-			
-			"key": credential,
-			"op" : "collsWithEntries",
-			"user" : user,
-			};
 		// send the collected data as JSON
-  		xhr2.send(JSON.stringify(data));
+		xhr.send(JSON.stringify(data));
 
-			xhr2.onreadystatechange = function () {
+		xhr.onreadystatechange = function () {
 
-			if (xhr2.readyState == 4) {
-    			var resp2 = JSON.parse(xhr2.responseText);
-	
-			var storageCollection = "null";
+			if (xhr.readyState == 4) {
+				var resp = JSON.parse(xhr.responseText);
+
+				var credential = resp.authCheckCred.key;
+				var user = resp.authCheckCred.user;
+
+				//Now I will get the description of the user collections with the method /collsWithEntries/
+				// Set up an asynchronous AJAX POST request
+				var xhr2 = new XMLHttpRequest();
+				xhr2.open('POST', chromeSssUrl + "collsWithEntries/", true); //false to make it synchronous
+
+				// Set correct header for form data 
+				xhr2.setRequestHeader('Content-type', 'application/json');
+
+				data={
+					"key": credential,
+					"op" : "collsWithEntries",
+					"user" : user,
+				};
+
+				// send the collected data as JSON
+				xhr2.send(JSON.stringify(data));
+				xhr2.onreadystatechange = function () {
+					
+					if (xhr2.readyState == 4) {
+						var resp2 = JSON.parse(xhr2.responseText);
+
+						var storageCollection = "null";
+
+						// XXX STOP
 
 			//If the bookmark is private I get the URL of the collection "Private bookmarks"
 			if(privates == true){
@@ -429,7 +441,7 @@ if(tags[j].replace(/^\s+|\s+$/g,'').length>0){
 
 
 
-document.write('<br><br><b><center>Your bookmark has been saved in the Social Semantic Server</center></b>');
+displayMessage('Your bookmark has been saved in the Social Semantic Server');
 	
 	 });
      });

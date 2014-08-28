@@ -2,12 +2,14 @@
 function save_options() {
   var sssUrl = document.getElementById('sss-url').value;
   var sssUser = document.getElementById('sss-user').value;
+  var sssPassword = document.getElementById('sss-password').value;
   
   if(sssUrl.substring(0,7)==="http://"){
   
   chrome.storage.sync.set({
     chromeSssUrl: sssUrl,
-    chromeSssUser: sssUser
+    chromeSssUser: sssUser,
+    chromeSssPassword: sssPassword
   }, function() {
     // Update status to let user know options were saved.
     var status = document.getElementById('status');
@@ -31,10 +33,12 @@ function restore_options() {
   // Use default values as empty
   chrome.storage.sync.get({
     chromeSssUrl: '',
-    chromeSssUser: ''
+    chromeSssUser: '',
+    chromeSssPassword: ''
   }, function(items) {
     document.getElementById('sss-url').value = items.chromeSssUrl;
     document.getElementById('sss-user').value = items.chromeSssUser;
+    document.getElementById('sss-password').value = items.chromeSssPassword;
   });
 }
 document.addEventListener('DOMContentLoaded', restore_options);
