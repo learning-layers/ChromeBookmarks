@@ -97,6 +97,36 @@ function authenticateUser(callback) {
 }
 
 /**
+ * Adds a tag to tags if one is not there yet.
+ * Will clean up the tags, removing any empty elements
+ */
+function appendToTags(e) {
+	if (e.target !== e.currentTarget) {
+		e.preventDefault();
+		var tag = e.target.getAttribute('data-tag');
+		var tags = document.getElementById('tags').value.split(',');
+
+		// Trim the elements removing front and back spaces
+		tags.forEach(function(element, index) {
+			tags[index] = element.trim();
+		});
+
+		if (tags.indexOf(tag) === -1) {
+			tags.push(tag);
+		}
+
+		var cleanedTags = [];
+		tags.forEach(function(element) {
+			if (element.trim()) {
+				cleanedTags.push(element);
+			}
+		});
+		document.getElementById('tags').value = cleanedTags.join(',');
+	}
+	e.stopPropagation();
+}
+
+/**
  * Load tags and display a tagcloud.
  */
 function displayTagcloud() {
@@ -123,22 +153,59 @@ function displayTagcloud() {
     			var resp = JSON.parse(xhr.responseText);
 
     			if (resp.error == false) {
-    				var tagcloud = document.getElementById('tagcloud');
 
-    				// XXX Need to create a array with unique tags and occurance counts
-    				resp.tagsGet.tags.forEach(function(element) {
-    					var taga = document.createElement('a');
-    					taga.text = element.label;
-    					taga.href = '#';
+    				if (resp.tagsGet.tags) {
+    					var tagcloud = document.getElementById('tagcloud');
+    					var tagsWithFrequs = {};
+    					var fontMin = 10;
+    					var fontMax = 14;
+    					var frequMin = null;
+    					var frequMax = null;
 
-    					tagcloud.innerHTML = tagcloud.innerHTML + ' ';
-    					tagcloud.appendChild(taga);
-    				});
+
+    					resp.tagsGet.tags.forEach(function(element) {
+    						if (tagsWithFrequs.hasOwnProperty(element.label)) {
+    							tagsWithFrequs[element.label].frequ += 1;
+    						} else {
+    							tagsWithFrequs[element.label] = {
+    								label: element.label,
+    								frequ: 1
+    							};
+    						}
+    					});
+
+    					Object.keys(tagsWithFrequs).forEach(function(key, index) {
+    						var element = tagsWithFrequs[key];
+    						if (index == 0) {
+    							frequMax = element.frequ;
+    							frequMin = element.frequ;
+    						} else {
+    							if (element.frequ > frequMax) {
+    								frequMax = element.frequ;
+    							} else if (element.frequ < frequMin) {
+    								frequMin = element.frequ;
+    							}
+    						}
+    					});
+
+    					Object.keys(tagsWithFrequs).forEach(function(key) {
+    						var tag = tagsWithFrequs[key];
+    						var fontSize = (tag.frequ === frequMin) ? fontMin : (tag.frequ / frequMax) * (fontMax - fontMin) + fontMin;
+    						var tagNode = document.createElement('a');
+    						tagNode.text = tag.label + ' (' + tag.frequ + ')';
+    						tagNode.setAttribute('data-tag', tag.label);
+    						tagNode.href = '#';
+    						tagNode.style.fontSize = fontSize;
+
+    						tagcloud.innerHTML = tagcloud.innerHTML + ' ';
+    						tagcloud.appendChild(tagNode);
+    					});
+    					tagcloud.addEventListener('click', appendToTags, false);
+    				}
     			}
     		}
     	}
     }
-
 }
 
 /**
@@ -256,7 +323,7 @@ function createEntity(storageCollection, entity, label, tags) {
 						"key": sssKey,
 						"op": "tagAdd",
 						"entity": entity,
-						"space": "privateSpace", // TODO See if it would make sense to set tags to be public, if the collection is public
+						"space": "privateSpace", // TODO See if it would make sense to set tags to be public, if the collection is public (sharedSpace)
 						"label": tags[j].replace(/^\s+|\s+$/g,''),
 						"user": sssUser,
 					};
