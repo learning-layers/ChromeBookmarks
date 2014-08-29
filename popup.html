@@ -18,15 +18,24 @@
     </head>
     <body>
         <form id="addbookmark">
-            <p><label for="title">Title</label><br />
-            <input type="text" id="title" name="title" size="50" value="" /></p>
-            <p><label for="tags">Tags (separated by comas ",")</label><br />
-            <input type="text" id="tags" name="tags" size="50" value="" /></p>
+            <p>
+                <label for="title">Title</label><br />
+                <input type="text" id="title" name="title" size="50" value="" />
+            </p>
+            <p>
+                <label for="tags">Tags (separated by comas ",")</label><br />
+                <input type="text" id="tags" name="tags" size="50" value="" />
+            </p>
+
+            <p id="tagcloud">
+            </p>
             
-			<p><label for="private">Check to make the bookmark private</label><input type="checkbox" id="private"></p>
+			<p>
+                <label for="private">Check to make the bookmark private</label>
+                <input type="checkbox" id="private">
+            </p>
 			
-			
-			
+            <p>
                 <input id="save" type="submit" value="Save Bookmark" />
                 <span id="status-display"></span>
             </p>
