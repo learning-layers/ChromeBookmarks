@@ -138,13 +138,12 @@ function displayTagcloud() {
     xhr.setRequestHeader('Content-type', 'application/json');
 
     // Use startTime in milliseconds to define a start time to fetch the tags from
-    //var now = new Date();
     var data={
     	"op":"tagsGet",
     	"user":sssUser,
     	"key":sssKey,
     	"forUser":sssUser,
-    	//"startTime":now.setDate(now.getDate() - 14).getTime()
+    	//"startTime":(new Date()).setDate((new Date()).getDate() - 14)
     };
 
     // Send the collected data as JSON
