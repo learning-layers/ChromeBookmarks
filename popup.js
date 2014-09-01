@@ -130,6 +130,12 @@ function appendToTags(e) {
  * Load tags and display a tagcloud.
  */
 function displayTagcloud() {
+	var tagcloud = document.getElementById('tagcloud');
+	var ajaxLoader = document.createElement('img');
+	ajaxLoader.alt = 'ajax-loader';
+	ajaxLoader.src = chrome.extension.getURL('ajax-loader.gif');
+	tagcloud.appendChild(ajaxLoader);
+
 	// Set up an asynchronous AJAX POST request
 	var xhr = new XMLHttpRequest();
     xhr.open('POST', chromeSssUrl + "tagsGet/", true); //false to make it synchronous
@@ -151,13 +157,13 @@ function displayTagcloud() {
 
     xhr.onreadystatechange = function() {
     	if (xhr.readyState == 4) {
+
     		if (xhr.status == 200) {
     			var resp = JSON.parse(xhr.responseText);
 
     			if (resp.error == false) {
 
     				if (resp.tagsGet.tags) {
-    					var tagcloud = document.getElementById('tagcloud');
     					var tagsWithFrequs = {};
     					var fontMin = 10;
     					var fontMax = 14;
@@ -205,6 +211,14 @@ function displayTagcloud() {
     					tagcloud.addEventListener('click', appendToTags, false);
     				}
     			}
+    		}
+
+    		// Remove ajax loader
+    		var images = tagcloud.getElementsByTagName('img');
+    		if (images.length > 0) {
+    			for (var i = 0; i < images.length; i++) {
+    				tagcloud.removeChild(images[i]);
+    			};
     		}
     	}
     }
@@ -390,7 +404,7 @@ function addBookmark() {
 
 	     		// Get URI of the Private Bookmarks collection, if one already exists
 	     		if(privates == true){
-	     			for(i=0;i<resp.collsWithEntries.colls.length;i++){
+	     			for(var i=0;i<resp.collsWithEntries.colls.length;i++){
 	     				if(resp.collsWithEntries.colls[i].label == chromeSssUser + " : Bookmarks Private"){
 	     					storageCollection = resp.collsWithEntries.colls[i].id;
 	     				}
@@ -399,7 +413,7 @@ function addBookmark() {
 
 	     		// Get URI of the Shared Bookmarks collection, if one already exists 
 	     		if(privates == false){
-	     			for(i=0;i<resp.collsWithEntries.colls.length;i++){
+	     			for(var i=0;i<resp.collsWithEntries.colls.length;i++){
 	     				if(resp.collsWithEntries.colls[i].label == chromeSssUser + " : Bookmarks Shared"){
 	     					storageCollection = resp.collsWithEntries.colls[i].id;
 	     				}
@@ -411,7 +425,7 @@ function addBookmark() {
 	     		if (storageCollection == "null") {
 	     			var rootCollection = null;
 
-	     			for(i=0;i<resp.collsWithEntries.colls.length;i++){
+	     			for(var i=0;i<resp.collsWithEntries.colls.length;i++){
 	     				if(resp.collsWithEntries.colls[i].label == "root"){
 	     					rootCollection = resp.collsWithEntries.colls[i].id;
 						}
