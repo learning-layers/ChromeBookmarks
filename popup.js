@@ -157,6 +157,13 @@ function displayTagcloud() {
 
     xhr.onreadystatechange = function() {
     	if (xhr.readyState == 4) {
+    		// Remove ajax loader
+    		var images = tagcloud.getElementsByTagName('img');
+    		if (images.length > 0) {
+    			for (var i = 0; i < images.length; i++) {
+    				tagcloud.removeChild(images[i]);
+    			};
+    		}
 
     		if (xhr.status == 200) {
     			var resp = JSON.parse(xhr.responseText);
@@ -211,14 +218,6 @@ function displayTagcloud() {
     					tagcloud.addEventListener('click', appendToTags, false);
     				}
     			}
-    		}
-
-    		// Remove ajax loader
-    		var images = tagcloud.getElementsByTagName('img');
-    		if (images.length > 0) {
-    			for (var i = 0; i < images.length; i++) {
-    				tagcloud.removeChild(images[i]);
-    			};
     		}
     	}
     }
