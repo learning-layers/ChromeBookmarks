@@ -137,11 +137,14 @@ function displayTagcloud() {
     // Set correct header for form data 
     xhr.setRequestHeader('Content-type', 'application/json');
 
+    // Use startTime in milliseconds to define a start time to fetch the tags from
+    //var now = new Date();
     var data={
     	"op":"tagsGet",
     	"user":sssUser,
     	"key":sssKey,
     	"forUser":sssUser,
+    	//"startTime":now.setDate(now.getDate() - 14).getTime()
     };
 
     // Send the collected data as JSON
@@ -192,7 +195,7 @@ function displayTagcloud() {
     						var tag = tagsWithFrequs[key];
     						var fontSize = (tag.frequ === frequMin) ? fontMin : (tag.frequ / frequMax) * (fontMax - fontMin) + fontMin;
     						var tagNode = document.createElement('a');
-    						tagNode.text = tag.label + ' (' + tag.frequ + ')';
+    						tagNode.text = tag.label;
     						tagNode.setAttribute('data-tag', tag.label);
     						tagNode.href = '#';
     						tagNode.style.fontSize = fontSize;
@@ -266,12 +269,12 @@ function createCollection(rootCollection, label, isPrivate, entityURI, entityLab
 				xhr1.onreadystatechange = function() {
 					if (xhr1.readyState == 4) {
 						// Add entity to collection. Make sure that we wait until the collection becomes public
-						createEntity(storageCollection, entityURI, entityLabel, entityTags);
+						createEntity(storageCollection, entityURI, entityLabel, entityTags, isPrivate);
 					}
 				}
 			} else {
 				// Add entity to collection
-				createEntity(storageCollection, entityURI, entityLabel, entityTags);
+				createEntity(storageCollection, entityURI, entityLabel, entityTags, isPrivate);
 			}
 		}
 	}
@@ -279,12 +282,13 @@ function createCollection(rootCollection, label, isPrivate, entityURI, entityLab
 
 /**
  * Add an entity to collection. Assign tags to an entity.
- * @param string storageCollection URI of the collection to add an entity to.
- * @param string entity            URI of an entity to be created.
- * @param string label             Label of an entity to be created.
- * @param array  tags              Array of tags to be added to an entity.
+ * @param string  storageCollection URI of the collection to add an entity to.
+ * @param string  entity            URI of an entity to be created.
+ * @param string  label             Label of an entity to be created.
+ * @param array   tags              Array of tags to be added to an entity.
+ * @param boolean isPrivate         A flag if entity is private or not, affects tags.
  */
-function createEntity(storageCollection, entity, label, tags) {
+function createEntity(storageCollection, entity, label, tags, isPrivate) {
 	// Set up an asynchronous AJAX POST request
 	var xhr = new XMLHttpRequest();
     xhr.open('POST', chromeSssUrl + "collEntryAdd/", true); //false to make it synchronous
@@ -323,7 +327,7 @@ function createEntity(storageCollection, entity, label, tags) {
 						"key": sssKey,
 						"op": "tagAdd",
 						"entity": entity,
-						"space": "privateSpace", // TODO See if it would make sense to set tags to be public, if the collection is public (sharedSpace)
+						"space":  (isPrivate) ? "privateSpace" : "sharedSpace", // Determine for the tag
 						"label": tags[j].replace(/^\s+|\s+$/g,''),
 						"user": sssUser,
 					};
@@ -430,7 +434,7 @@ function addBookmark() {
 				} else {
 				    
 				    // Add an entity to a corresponding collection
-				    createEntity(storageCollection, entityURI, entityLabel, entityTags);
+				    createEntity(storageCollection, entityURI, entityLabel, entityTags, privates);
 				}
 			}
 		}
