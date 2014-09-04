@@ -61,7 +61,7 @@ function authenticateUser(callback) {
     var data={
     	"key":"someKey",
     	"op":"authCheckCred",
-    	"pass":chromeSssPassword,
+    	"password":chromeSssPassword,
     	"user":"mailto:dummy",
     	"label":chromeSssUser,
     };
