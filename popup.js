@@ -405,6 +405,9 @@ function createEntity(storageCollection, entity, label, tags, isPrivate) {
 function addBookmark() {
     // Cancel the form submit
     event.preventDefault();
+
+    document.getElementById('save').disabled = true;
+    document.getElementById('save').value = 'Please wait...';
     
     // Prepare the data to be POSTed
     var entityLabel = document.getElementById('title').value;
@@ -419,7 +422,7 @@ function addBookmark() {
     var privates = document.getElementById('private').checked;
 
 	chrome.tabs.getSelected(null,function(tab) {
-	     var entityURI = tab.url;	
+	     var entityURI = tab.url;
 
 	     // Load the root collection of the user. That one should hold all the needed subcollections
 
