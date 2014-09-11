@@ -104,6 +104,8 @@ function appendToTags(e) {
 	if (e.target !== e.currentTarget) {
 		e.preventDefault();
 		var tag = e.target.getAttribute('data-tag');
+		// Replace underscores with spaces
+		tag = tag.replace(/_/g, ' ');
 		var tags = document.getElementById('tags').value.split(',');
 
 		// Trim the elements removing front and back spaces
