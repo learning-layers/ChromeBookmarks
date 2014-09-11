@@ -257,7 +257,20 @@ function createCollection(rootCollection, label, isPrivate, entityURI, entityLab
 
 	    if (xhr.readyState == 4) {
 
+	    	if (xhr.status != 200) {
+	    		// Fail with message and error code if one occurs
+    			displayMessage("Collection create request failure with code " + xhr.status, 'error');
+    			return false;
+	    	}
+
 	    	var resp = JSON.parse(xhr.responseText);
+
+	    	if (resp.error == true) {
+	    		// Fail with message if authentication did not succeed
+	    		displayMessage('Holder collection could not be created.', 'error');
+	    		return false;
+	    	}
+
 			var storageCollection = resp.collEntryAdd.entity;
 
 			if (!isPrivate) {
@@ -281,6 +294,21 @@ function createCollection(rootCollection, label, isPrivate, entityURI, entityLab
 
 				xhr1.onreadystatechange = function() {
 					if (xhr1.readyState == 4) {
+
+						if (xhr1.status != 200) {
+						    // Fail with message and error code if one occurs
+						    displayMessage("Holder collection publication request failure with code " + xhr1.status, 'error');
+						    return false;
+						}
+
+						var resp = JSON.parse(xhr1.responseText);
+
+						if (resp.error == true) {
+						    // Fail with message if authentication did not succeed
+						    displayMessage('Holder collection could not be set to public.', 'error');
+						    return false;
+						}
+
 						// Add entity to collection. Make sure that we wait until the collection becomes public
 						createEntity(storageCollection, entityURI, entityLabel, entityTags, isPrivate);
 					}
@@ -326,8 +354,22 @@ function createEntity(storageCollection, entity, label, tags, isPrivate) {
 
 		if (xhr.readyState == 4) {
 
+			if (xhr.status != 200) {
+	    		// Fail with message and error code if one occurs
+    			displayMessage("Bookmark create request failure with code " + xhr.status, 'error');
+    			return false;
+	    	}
+
+	    	var resp = JSON.parse(xhr.responseText);
+
+	    	if (resp.error == true) {
+	    	    // Fail with message if authentication did not succeed
+	    	    displayMessage('Bookmark could not be created.', 'error');
+	    	    return false;
+	    	}
+
 			// Add tags to an entity/bookmark
-			for(j=0;j<tags.length;j++){
+			for(var j=0;j<tags.length;j++) {
 				if(tags[j].replace(/^\s+|\s+$/g,'').length>0){
 				    // Set up an asynchronous AJAX POST request
 				    var xhr1 = new XMLHttpRequest();
@@ -349,6 +391,8 @@ function createEntity(storageCollection, entity, label, tags, isPrivate) {
 					xhr1.send(JSON.stringify(data));
 				}
 			}
+			// Display success message
+			displayMessage('Your bookmark has been saved in the Social Semantic Server');
 		}
 	}
 }
@@ -398,7 +442,20 @@ function addBookmark() {
 	     xhr.onreadystatechange = function () {
 
 	     	if (xhr.readyState == 4) {
+
+	     		if (xhr.status != 200) {
+	     		    // Fail with message and error code if one occurs
+	     		    displayMessage("Root collection fetch request failure with code " + xhr.status, 'error');
+	     		    return false;
+	     		}
+
 	     		var resp = JSON.parse(xhr.responseText);
+
+	     		if (resp.error == true) {
+	     		    // Fail with message if authentication did not succeed
+	     		    displayMessage('Root collection could not be fetched.', 'error');
+	     		    return false;
+	     		}
 
 	     		var storageCollection = "null";
 
@@ -451,9 +508,6 @@ function addBookmark() {
 				}
 			}
 		}
-
-		// TODO It might make sense to only show the message in case of success
-		displayMessage('Your bookmark has been saved in the Social Semantic Server');
 	});  
 }
 
