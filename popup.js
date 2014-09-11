@@ -207,7 +207,8 @@ function displayTagcloud() {
     						var tag = tagsWithFrequs[key];
     						var fontSize = (tag.frequ === frequMin) ? fontMin : (tag.frequ / frequMax) * (fontMax - fontMin) + fontMin;
     						var tagNode = document.createElement('a');
-    						tagNode.text = tag.label;
+    						// Replace underscores with spaces
+    						tagNode.text = tag.label.replace(/_/g, ' ');
     						tagNode.setAttribute('data-tag', tag.label);
     						tagNode.href = '#';
     						tagNode.style.fontSize = fontSize;
