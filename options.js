@@ -4,7 +4,7 @@ function save_options() {
   var sssUser = document.getElementById('sss-user').value;
   var sssPassword = document.getElementById('sss-password').value;
   
-  if(sssUrl.substring(0,7)==="http://"){
+  if( checkValidUrl(sssUrl) ){
   
   chrome.storage.sync.set({
     chromeSssUrl: sssUrl,

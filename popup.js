@@ -518,17 +518,6 @@ function addBookmark() {
 
 // When the popup HTML has loaded
 window.addEventListener('load', function(evt) {
-	// Load options, display error message if fails or options are empty
-	loadOptions(function() {
-		// Authenticte use with callback if successful
-		authenticateUser(function() {
-			// Display tagcloud if successful
-			displayTagcloud();
-
-			// Handle the bookmark form submit event with our addBookmark function
-			document.getElementById('addbookmark').addEventListener('submit', addBookmark);
-		});
-	});
 
     // Cache a reference to the status display SPAN
     statusDisplay = document.getElementById('status-display');
@@ -536,6 +525,22 @@ window.addEventListener('load', function(evt) {
     // into the current HTML page and passing in our onPageInfo function as the callback
 
     chrome.tabs.getSelected(null,function(tab) {
+    	if ( !checkValidUrl(tab.url) ) {
+    		displayMessage('You are trying to bookmark an invalid URL. Only http:// or https:// allowed.', 'error');
+    		return false;
+    	}
+
+    	// Load options, display error message if fails or options are empty
+    	loadOptions(function() {
+    	    // Authenticte use with callback if successful
+    		authenticateUser(function() {
+    		    // Display tagcloud if successful
+    		    displayTagcloud();
+
+    		    // Handle the bookmark form submit event with our addBookmark function
+    		    document.getElementById('addbookmark').addEventListener('submit', addBookmark);
+    		});
+    	});
 
     	var tabTitle = tab.title;
 
